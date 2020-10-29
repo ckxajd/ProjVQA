@@ -1,0 +1,113 @@
+import sys
+from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
+
+class picture(QWidget):
+    def __init__(self):
+        super(picture, self).__init__()
+
+        self.resize(1600, 800)
+        self.setWindowTitle("VQA系统")
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setAutoFillBackground(True)
+
+        palette = QPalette()
+        palette.setBrush(QPalette.Background, QBrush(QPixmap("pic/背景3.jpg").scaled(self.width(), self.height())))
+        self.setPalette(palette)
+
+        self.label = QLabel(self)
+        self.label.setFixedSize(600, 400)
+        self.label.move(10, 90)
+
+        self.label.setStyleSheet("QLabel{background:white;}"
+                                 "QLabel{background-color:rgb(255,255,255,20%)}"
+                                 )
+
+        plead_action = QAction(self)
+        plead_action.setIcon(QIcon("pic/问号1.jpg"))
+        self.le_a = QLineEdit(self)
+        self.le_a.setStyleSheet("background-color:rgba(255,255,255,20%);border-width:1;border-style:outset;color:white")
+        self.le_a.setFont(QFont("Timers", 15))
+        self.le_a.setPlaceholderText("请在此输入问题")
+        self.le_a.addAction(plead_action, QLineEdit.LeadingPosition)
+        self.le_a.resize(750, 40)
+        self.le_a.move(800, 90)
+
+        plead_action_2 = QAction(self)
+        plead_action_2.setIcon(QIcon("pic/回答1.jpg"))
+        self.le_b = QLineEdit(self)
+        self.le_b.setStyleSheet("background-color:rgba(255,255,255,20%);border-width:1;border-style:outset")
+        self.le_b.setFont(QFont("Timers", 15))
+        self.le_b.addAction(plead_action_2, QLineEdit.LeadingPosition)
+        self.le_b.resize(350, 40)
+        self.le_b.move(800, 450)
+
+        button_style = ''' 
+                             QPushButton:pressed
+                             {text-align : center;
+                             background-color : light gray;
+                             font: bold;
+                             border-color: red;
+                             border-width: 0px;
+                             border-radius: 10px;
+                             padding: 6px;
+                             height : 14px;
+                             border-style: outset;
+                             font : 14px;}
+                             '''
+
+        button_style_2 = ''' 
+                            QPushButton:pressed
+                            {text-align : center;
+                            background-color : light gray;
+                            font: bold;
+                            border-color: red;
+                            border-width: 0px;
+                            border-radius: 52px;
+                            padding: 6px;
+                            height : 100px;
+                            border-style: outset;
+                            font : 14px;}
+                            '''
+
+        btn_1 = QPushButton(self)
+        btn_1.setFixedSize(32, 32)
+        btn_1.setIcon(QIcon("pic/文件夹2.jpg"))
+        btn_1.setIconSize(QSize(32, 32))
+        btn_1.move(10, 30)
+        btn_1.setStyleSheet(button_style)
+        btn_1.clicked.connect(self.open_image)
+
+        btn_2 = QPushButton(self)
+        btn_2.setFixedSize(32, 32)
+        btn_2.setIcon(QIcon("pic/运行3.png"))
+        btn_2.setIconSize(QSize(32, 32))
+        btn_2.move(1555, 95)
+        btn_2.setStyleSheet(button_style_2)
+        btn_2.clicked.connect(self.vqa)
+
+    def open_image(self):
+        global pic_input
+        img_name, img_type = QFileDialog.getOpenFileName(self, "打开图片", "", "*.jpg;;*.png;;All Files(*)")
+        self.pic = QtGui.QPixmap(img_name).scaled(self.label.width(), self.label.height())
+        self.label.setPixmap(self.pic)
+        pic_input = mpimg.imread(img_name)
+
+    def vqa(self):
+        #plt.imshow(pic_input)
+        #plt.show()
+        global question_input
+        question_input = self.le_a.text()
+        print(question_input)
+
+
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    my = picture()
+    my.show()
+    sys.exit(app.exec_())
